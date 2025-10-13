@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">LocusPace</string>
+    <string name="rightaddress">BE THE CHANGE</string>
+    <string name="together">Together, We Can End Hunger And Make It A\nBetter Place!</string>
+    <string name="g_home">Main</string>
+    <string name="g_chair">Chair</string>
+    <string name="g_cupboard">Cupboard</string>
+    <string name="g_table">Table</string>
+    <string name="g_accessory">Accessory</string>
+    <string name="g_furniture">Furniture</string>
+    <string name="g_enlightening">Enlightening</string>
+    <string name="change">Change Avatar</string>
+    <string name="lub">Made with ❤ by Team Minions</string>
+    <string name="distance">5.2 Km</string>
+    <string name="distancee">DISTANCE</string>
+    <string name="time">TIME</string>
+    <string name="avg_speed">AVG SPEED</string>
+    <string name="avg_pace">AVG PACE</string>
+</resources>

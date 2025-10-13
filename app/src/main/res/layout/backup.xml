@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_backup"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/arrow"
+        app:navigationIconTint="?attr/colorOnPrimary"
+        app:title="Backup and Restore"
+        app:titleTextColor="?attr/colorOnPrimary"/>
+
+    <TextView
+        android:id="@+id/tv_privacy_notice"
+        style="@style/h2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:text="Your privacy is our priority. All your track data is stored securely on your device and is never shared. You have full control to export your data or back it up to your personal Google Drive."
+        android:textColor="?attr/colorOnSurfaceVariant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_backup" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_privacy_notice"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:divider="@drawable/list_divider"
+            android:showDividers="middle">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btn_export_gpx"
+                style="@style/NavMenuItem"
+                android:text="Export to GPX File"
+                app:drawableStartCompat="@drawable/backup"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btn_import_gpx"
+                style="@style/NavMenuItem"
+                android:text="Import from GPX File"
+                app:drawableStartCompat="@drawable/resource_import"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btn_backup_drive"
+                style="@style/NavMenuItem"
+                android:text="Backup to Google Drive"
+                app:drawableStartCompat="@drawable/drive"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
