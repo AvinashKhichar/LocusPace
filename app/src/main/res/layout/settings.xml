@@ -109,7 +109,6 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         style="@style/NavMenuItem"
-                        android:background="?null"
                         android:clickable="false"
                         android:focusable="false">
 
@@ -119,7 +118,6 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:text="App Version"
-                            android:background="?null"
                             android:clickable="false"
                             android:focusable="false"/>
 

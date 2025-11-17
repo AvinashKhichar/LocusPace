@@ -1,195 +1,420 @@
-package com.locuspace// Replace with your package name
+package com.locuspace
+
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.os.Looper
+import android.os.SystemClock
+import android.preference.PreferenceManager
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.location.LocationManagerCompat.getCurrentLocation
+import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.common.internal.FallbackServiceBroker
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import kotlinx.coroutines.launch
+import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.views.MapView
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.Marker
+import android.content.Intent
+import android.net.Uri
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
+
+class MainActivity : AppCompatActivity(){
+
+    private lateinit var mapView: MapView
+    private lateinit var timeText : TextView
+    private lateinit var startButton : Button
+    private lateinit var finishButton : Button
+
+    //location
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+
+    //databse
+    private lateinit var db: AppDatabase
+    private lateinit var runDao: RunDao
+
+
+    //notiification
+    private val NOTIF_REQ_CODE = 2001
+
+
+
+    //map markers
+    private var userMarker: Marker? = null
+    private var pathLine: Polyline? = null
+    private val pathPoints = mutableListOf<GeoPoint>()
+    private val LOCATION_PERMISSION = 1001
+
+
+    private var isRunning  = false
+    private var baseTime = 0L
+    private var elapsedTime = 0L
+
+    private val handler = android.os.Handler(Looper.getMainLooper())
+
+    private val updateRunnable = object : Runnable{
+        override fun run(){
+            val now = SystemClock.elapsedRealtime()
+            val currentElapsed = now - baseTime
+            updateTimeText(elapsedTime + currentElapsed)
+            handler.postDelayed(this, 1000L)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.home)
+
+
+
+
+
+        //location preference
+        Configuration.getInstance().load(
+            applicationContext,
+            PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        )
+
+        //database
+        db = AppDatabase.getInstance(this)
+        runDao = db.runDao()
+
+        //current location(realtime)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            2000
+        ).build()
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                for (location in result.locations) {
+                    updateUserLocation(location.latitude, location.longitude)
+                }
+            }
+        }
+
+        requestLocationPermission()
+        //notification
+        requestNotificationPermissionIfNeeded()
+
+
+        mapView = findViewById(R.id.map)
+        mapView.setTileSource(TileSourceFactory.MAPNIK)
+        mapView.setMultiTouchControls(true)
+
+        val mapController = mapView.controller
+//        mapController.setZoom(15.0)
+//        val marker = Marker(mapView)
 //
-//import android.Manifest
-//import android.content.pm.PackageManager
-//import android.graphics.Color
-//import android.location.Location
-//import android.os.Bundle
-//import android.os.Handler
-//import android.os.Looper
-//import android.os.SystemClock
-//import android.widget.TextView
-//import android.widget.Toast
-//import androidx.appcompat.app.AppCompatActivity
-//import androidx.core.app.ActivityCompat
-//import androidx.core.content.ContextCompat
-//import com.google.android.gms.location.*
-//import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-//import org.osmdroid.util.GeoPoint
-//import org.osmdroid.views.MapView
-//import org.osmdroid.views.overlay.Polyline
-//import java.util.concurrent.TimeUnit
-//
-//class MainActivity : AppCompatActivity() {
-//
-//    private lateinit var mapView: MapView
-//    private lateinit var fusedLocationClient: FusedLocationProviderClient
-//    private lateinit var locationCallback: LocationCallback
-//
-//    // UI Elements
-//    private lateinit var distanceTextView: TextView
-//    private lateinit var timeTextView: TextView
-//    private lateinit var speedTextView: TextView
-//    private lateinit var paceTextView: TextView
-//
-//    // Timer
-//    private val timerHandler = Handler(Looper.getMainLooper())
-//    private lateinit var timerRunnable: Runnable
-//    private var startTime = 0L
-//
-//    // Tracking State
-//    private var totalDistance = 0.0f // in meters
-//    private var lastLocation: Location? = null
-//    private val pathPoints = mutableListOf<GeoPoint>()
-//    private lateinit var pathOverlay: Polyline
-//
-//    companion object {
-//        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-//    }
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.home)
-//
-//        // Initialize Views
-//        mapView = findViewById(R.id.map)
-//        distanceTextView = findViewById(R.id.distance)
-//        timeTextView = findViewById(R.id.time)
-//        speedTextView = findViewById(R.id.speed)
-//        paceTextView = findViewById(R.id.pace)
-//
-//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-//
-//        setupMap()
-//        setupLocationCallback()
-//        setupTimer()
-//        checkLocationPermission()
-//    }
-//
-//    private fun setupMap() {
-//        mapView.setTileSource(TileSourceFactory.MAPNIK)
-//        mapView.setMultiTouchControls(true)
-//        mapView.controller.setZoom(18.0)
-//        pathOverlay = Polyline().apply {
-//            color = Color.BLUE
-//            width = 10f
-//        }
-//        mapView.overlays.add(pathOverlay)
-//    }
-//
-//    private fun setupLocationCallback() {
-//        locationCallback = object : LocationCallback() {
-//            override fun onLocationResult(locationResult: LocationResult) {
-//                locationResult.lastLocation?.let { newLocation ->
-//                    updatePath(newLocation)
-//                    updateStats(newLocation)
-//                    lastLocation = newLocation
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun setupTimer() {
-//        timerRunnable = object : Runnable {
-//            override fun run() {
-//                val elapsedMillis = SystemClock.elapsedRealtime() - startTime
-//                timeTextView.text = formatTime(elapsedMillis)
-//                timerHandler.postDelayed(this, 1000) // Update every second
-//            }
-//        }
-//    }
-//
-//    private fun checkLocationPermission() {
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
-//        } else {
-//            startTracking()
-//        }
-//    }
-//
-//    private fun startTracking() {
-//        Toast.makeText(this, "Tracking started!", Toast.LENGTH_SHORT).show()
-//
-//        // Start time tracking
-//        startTime = SystemClock.elapsedRealtime()
-//        timerHandler.post(timerRunnable)
-//
-//        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
-//            .setWaitForAccurateLocation(true)
-//            .setMinUpdateIntervalMillis(2000)
-//            .setMaxUpdateDelayMillis(10000)
-//            .build()
-//
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-//        }
-//    }
-//
-//    private fun stopTracking() {
+//        val startPoint = GeoPoint(18.605701, 73.874417)
+//        mapController.setCenter(startPoint)
+
+
+        timeText = findViewById(R.id.time)
+        startButton = findViewById(R.id.start_button)
+        finishButton = findViewById(R.id.stop_button)
+
+        val musicIcon = findViewById<ImageView>(R.id.music_icon)
+
+        musicIcon.setOnClickListener {
+            openSpotify()
+        }
+
+        finishButton.visibility = View.GONE
+
+        updateTimeText(0L)
+
+        startButton.setOnClickListener {
+            if(!isRunning){
+                startStopWatch()
+                finishButton.visibility = View.VISIBLE
+            }else{
+                stopStopWatch()
+            }
+        }
+
+        finishButton.setOnClickListener {
+            finishRun()
+        }
+    }
+
+
+
+    private fun calculateTotalDistanceMeters(): Double{
+        if(pathPoints.size<2)return 0.0
+
+        var distance = 0.0
+        for(i in 1 until pathPoints.size){
+            distance += pathPoints[i-1].distanceToAsDouble(pathPoints[i])
+        }
+        return distance
+    }
+
+
+    private fun finishRun(){
+        stopForegroundTrackingService()
+        val totalMillis = if(isRunning){
+            val now = SystemClock.elapsedRealtime()
+            elapsedTime+(now-baseTime)
+        }else{
+            elapsedTime
+        }
+
+        val distanceMeters = calculateTotalDistanceMeters()
+
+
+        val hours = totalMillis/3600000
+        val avgSpeedKmh = if(totalMillis>0){
+            (distanceMeters/1000.0)/totalMillis
+        }else{
+            0.0
+        }
+
+        val run = RunEntity(
+            timestamp = System.currentTimeMillis(),
+            durationMillis = totalMillis,
+            distanceMeters = distanceMeters,
+            avgSpeedKmh = avgSpeedKmh
+        )
+
+
+        lifecycleScope.launch {
+            runDao.insert(run)
+        }
+
+        resetStopWatch()
+        finishButton.visibility = View.GONE
+    }
+
+
+    private fun startStopWatch(){
+        isRunning = true
+        startButton.text = "STOP"
+
+        startForegroundTrackingService()
+
+        baseTime = SystemClock.elapsedRealtime()
+        handler.post(updateRunnable)
+
+        pathPoints.clear()
+        if (pathLine == null) {
+            pathLine = Polyline().apply {
+                setPoints(pathPoints)
+            }
+            mapView.overlays.add(pathLine)
+        } else {
+            pathLine!!.setPoints(pathPoints)
+        }
+    }
+
+    private fun stopStopWatch(){
+        isRunning = false
+        startButton.text = "START"
+        stopForegroundTrackingService()
+
+
+
+        val now = SystemClock.elapsedRealtime()
+        elapsedTime += now - baseTime
+
+        handler.removeCallbacks(updateRunnable)
+
+
+    }
+
+    private fun resetStopWatch(){
+        isRunning = false
+        handler.removeCallbacks(updateRunnable)
+        elapsedTime =0L
+        baseTime = 0L
+        updateTimeText(0L)
+        startButton.text = "Start"
+
+        pathPoints.clear()
+        pathLine?.setPoints(pathPoints)
+        mapView.invalidate()
+    }
+
+    private fun updateTimeText(milis : Long){
+        val totalSeconds = milis/1000
+        val minutes = totalSeconds/60
+        val seconds = totalSeconds%60
+        timeText.text = String.format("%02d:%02d", minutes, seconds)
+    }
+
+    override fun onResume(){
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
 //        fusedLocationClient.removeLocationUpdates(locationCallback)
-//        timerHandler.removeCallbacks(timerRunnable)
-//        Toast.makeText(this, "Tracking stopped.", Toast.LENGTH_SHORT).show()
-//    }
+//        if(isRunning) stopStopWatch()
+    }
+
+    private fun requestLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION
+            )
+        } else {
+            startLocationUpdates()
+        }
+    }
+
+//    private fun getCurrentLocation() {
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+//            != PackageManager.PERMISSION_GRANTED) return
 //
-//    private fun updatePath(location: Location) {
-//        val newPoint = GeoPoint(location.latitude, location.longitude)
-//        pathPoints.add(newPoint)
-//        pathOverlay.setPoints(pathPoints)
-//        mapView.controller.animateTo(newPoint)
-//        mapView.invalidate()
-//    }
+//        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+//            if (location != null) {
+//                val userPoint = GeoPoint(location.latitude, location.longitude)
 //
-//    private fun updateStats(location: Location) {
-//        lastLocation?.let { totalDistance += it.distanceTo(location) }
-//        distanceTextView.text = String.format("%.2f km", totalDistance / 1000)
+//                // Move map to this point
+//                val controller = mapView.controller
+//                controller.setZoom(17.0)
+//                controller.setCenter(userPoint)
 //
-//        val speedKmh = location.speed * 3.6f
-//        speedTextView.text = String.format("%.1f", speedKmh)
-//
-//        if (speedKmh > 1) {
-//            val paceMinPerKm = 60 / speedKmh
-//            val minutes = paceMinPerKm.toInt()
-//            val seconds = ((paceMinPerKm - minutes) * 60).toInt()
-//            paceTextView.text = String.format("%d'%02d\"", minutes, seconds)
-//        } else {
-//            paceTextView.text = "0'00\""
-//        }
-//    }
-//
-//    private fun formatTime(millis: Long): String {
-//        val hours = TimeUnit.MILLISECONDS.toHours(millis)
-//        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60
-//        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60
-//        return if (hours > 0) {
-//            String.format("%02d:%02d:%02d", hours, minutes, seconds)
-//        } else {
-//            String.format("%02d:%02d", minutes, seconds)
-//        }
-//    }
-//
-//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                startTracking()
-//            } else {
-//                Toast.makeText(this, "Location permission is required for tracking.", Toast.LENGTH_LONG).show()
+//                // Add marker
+//                val marker = Marker(mapView)
+//                marker.position = userPoint
+//                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+//                marker.title = "You are here"
+//                mapView.overlays.add(marker)
 //            }
 //        }
 //    }
-//
-//    override fun onResume() {
-//        super.onResume()
-//        mapView.onResume()
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//        mapView.onPause()
-//    }
-//
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        stopTracking()
-//    }
-//}
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted, now get the location
+                startLocationUpdates()
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    private fun updateUserLocation(lat: Double, lon: Double) {
+        val newPoint = GeoPoint(lat, lon)
+
+        if (userMarker == null) {
+            userMarker = Marker(mapView).apply {
+                position = newPoint
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                title = "You"
+            }
+            mapView.overlays.add(userMarker)
+            mapView.controller.setZoom(18.0)
+        }else {
+            userMarker!!.position = newPoint
+        }
+
+        mapView.controller.setCenter(newPoint)
+        if (isRunning) {
+            pathPoints.add(newPoint)
+
+            if (pathLine == null) {
+                pathLine = Polyline().apply {
+                    setPoints(pathPoints)
+                }
+                mapView.overlays.add(pathLine)
+            } else {
+                pathLine!!.setPoints(pathPoints)
+            }
+        }
+
+        mapView.invalidate()
+    }
+
+    private fun openSpotify() {
+        // 1) Your target link (playlist/track/artist/whatever)
+        // Replace this with your own:
+        // e.g. "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M"
+        val spotifyUrl = "https://open.spotify.com/"
+
+        // Intent to open Spotify using HTTPS deeplink
+        val spotifyIntent = Intent(Intent.ACTION_VIEW, Uri.parse(spotifyUrl)).apply {
+            // Prefer Spotify app if installed
+            `package` = "com.spotify.music"
+        }
+
+        // Try to open in Spotify app
+        if (spotifyIntent.resolveActivity(packageManager) != null) {
+            startActivity(spotifyIntent)
+        } else {
+            // Fallback: open in browser or Play Store
+            val webIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(spotifyUrl)
+            )
+            startActivity(webIntent)
+        }
+    }
+
+    private fun startForegroundTrackingService() {
+        val intent = Intent(this, TrackingService::class.java)
+        startForegroundService(intent)
+    }
+
+    private fun stopForegroundTrackingService() {
+        val intent = Intent(this, TrackingService::class.java)
+        stopService(intent)
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIF_REQ_CODE
+                )
+            }
+        }
+    }
+
+
+
+}
