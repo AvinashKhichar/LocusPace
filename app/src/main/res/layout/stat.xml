@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface"
-    >
+    android:background="?attr/colorSurface">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_history"
@@ -18,7 +17,7 @@
         app:navigationIcon="@drawable/arrow"
         app:navigationIconTint="?attr/colorOnPrimary"
         app:title="Statistics"
-        app:titleTextColor="?attr/colorOnPrimary"/>
+        app:titleTextColor="?attr/colorOnPrimary" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_graph_stats"
@@ -42,12 +41,47 @@
                 android:text="Activity Summary"
                 android:textAppearance="?attr/textAppearanceTitleMedium" />
 
-            <View
+            <!-- Summary “chart” area -->
+            <LinearLayout
                 android:id="@+id/chart_summary"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="?attr/colorSurfaceVariant" />
+                android:background="?attr/colorSurfaceVariant"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/tv_total_runs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total runs: 0"
+                    android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+                <TextView
+                    android:id="@+id/tv_total_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Total distance: 0.00 km"
+                    android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+                <TextView
+                    android:id="@+id/tv_total_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Total duration: 00:00:00"
+                    android:textAppearance="?attr/textAppearanceBodyMedium" />
+
+                <TextView
+                    android:id="@+id/tv_avg_speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Avg speed: 0.0 km/h"
+                    android:textAppearance="?attr/textAppearanceBodyMedium" />
+            </LinearLayout>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -71,8 +105,10 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_list_header"
+        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/item_track_history" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

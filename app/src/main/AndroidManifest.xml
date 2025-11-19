@@ -30,7 +30,7 @@
             android:foregroundServiceType="location" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".TrackRun"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.LocusPace">
@@ -39,6 +39,23 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".Statistic"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.LocusPace">
+
+        </activity>
+
+        <activity
+            android:name=".RunDetailActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.LocusPace">
+
         </activity>
     </application>
 

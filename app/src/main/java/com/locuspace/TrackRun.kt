@@ -12,9 +12,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.location.LocationManagerCompat.getCurrentLocation
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.common.internal.FallbackServiceBroker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -32,8 +30,18 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import com.locuspace.Database.AppDatabase
+import com.locuspace.Database.RunDao
+import com.locuspace.Database.RunEntity
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.os.Environment
+import java.io.File
+import java.io.FileOutputStream
+import kotlin.jvm.java
 
-class MainActivity : AppCompatActivity(){
+
+class TrackRun : AppCompatActivity(){
 
     private lateinit var mapView: MapView
     private lateinit var timeText : TextView
@@ -188,6 +196,8 @@ class MainActivity : AppCompatActivity(){
             0.0
         }
 
+        val runTimestamp = System.currentTimeMillis()
+
         val run = RunEntity(
             timestamp = System.currentTimeMillis(),
             durationMillis = totalMillis,
@@ -197,8 +207,18 @@ class MainActivity : AppCompatActivity(){
 
 
         lifecycleScope.launch {
+            saveSnapshotForRun(runTimestamp)
             runDao.insert(run)
         }
+
+        val detailIntent = Intent(this, RunDetailActivity::class.java).apply {
+            putExtra("timestamp", runTimestamp)
+            putExtra("durationMillis", totalMillis)
+            putExtra("distanceMeters", distanceMeters)
+            putExtra("avgSpeedKmh", avgSpeedKmh)
+            putParcelableArrayListExtra("pathPoints", ArrayList(pathPoints))
+        }
+        startActivity(detailIntent)
 
         resetStopWatch()
         finishButton.visibility = View.GONE
@@ -414,6 +434,42 @@ class MainActivity : AppCompatActivity(){
             }
         }
     }
+
+
+
+    private fun captureRouteSnapshot(): Bitmap? {
+        if (mapView.width == 0 || mapView.height == 0) return null
+
+        val bitmap = Bitmap.createBitmap(
+            mapView.width,
+            mapView.height,
+            Bitmap.Config.ARGB_8888
+        )
+
+        val canvas = Canvas(bitmap)
+        mapView.draw(canvas)   // draw map + overlays + path
+        return bitmap
+
+    }
+
+    private fun getSnapshotFile(runTimestamp: Long): File {
+        val dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: filesDir
+        return File(dir, "run_${runTimestamp}.png")
+    }
+
+    private fun saveSnapshotForRun(runTimestamp: Long) {
+        val bitmap = captureRouteSnapshot() ?: return
+        val file = getSnapshotFile(runTimestamp)
+
+        FileOutputStream(file).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out)
+        }
+    }
+
+
+
+
+
 
 
 
