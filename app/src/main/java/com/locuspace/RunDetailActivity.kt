@@ -5,6 +5,9 @@ import android.preference.PreferenceManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.graphics.vector.addPathNodes
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.google.android.material.appbar.MaterialToolbar
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
@@ -14,7 +17,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Polyline
 
-class RunDetailActivity : AppCompatActivity() {
+class RunDetailActivity : BaseActivity(){
 
     private lateinit var mapView: MapView
 
@@ -25,6 +28,7 @@ class RunDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.track)
 
         // ----- Toolbar -----
@@ -91,6 +95,8 @@ class RunDetailActivity : AppCompatActivity() {
             // fallback: just set a default zoom if you want
             mapView.controller.setZoom(15.0)
         }
+
+        enableImmersiveMode()
     }
 
     private fun showFullPath(points: List<GeoPoint>) {
@@ -156,6 +162,25 @@ class RunDetailActivity : AppCompatActivity() {
         val centerLat = (box.latNorth + box.latSouth) / 2
         val centerLon = (box.lonEast + box.lonWest) / 2
         mapView.controller.setCenter(GeoPoint(centerLat, centerLon))
+    }
+
+    private fun enableImmersiveMode() {
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+
+        controller.hide(
+            WindowInsetsCompat.Type.statusBars() or
+                    WindowInsetsCompat.Type.navigationBars()
+        )
+
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            enableImmersiveMode()
+        }
     }
 
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background can be a solid color -->
+    <background android:drawable="@drawable/locus" />
+    <!-- Foreground is your vector logo -->
+    <foreground android:drawable="@drawable/locus" />
+</adaptive-icon>

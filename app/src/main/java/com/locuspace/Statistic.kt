@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
@@ -14,7 +17,7 @@ import com.locuspace.Database.RunEntity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class Statistic : AppCompatActivity() {
+class Statistic : BaseActivity() {
 
 
     private lateinit var toolbar : MaterialToolbar
@@ -33,6 +36,7 @@ class Statistic : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.stat)
 
         toolbar = findViewById(R.id.toolbar_history)
@@ -62,8 +66,28 @@ class Statistic : AppCompatActivity() {
         val db = AppDatabase.getInstance(this)
         runDao = db.runDao()
 
+        enableImmersiveMode()
         observeRuns()
 
+    }
+
+    private fun enableImmersiveMode() {
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+
+        controller.hide(
+            WindowInsetsCompat.Type.statusBars() or
+                    WindowInsetsCompat.Type.navigationBars()
+        )
+
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            enableImmersiveMode()
+        }
     }
 
     private fun observeRuns(){

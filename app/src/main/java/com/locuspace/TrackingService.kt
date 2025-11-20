@@ -36,8 +36,7 @@ class TrackingService : Service() {
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle("Run tracking active")
             .setContentText("Tracking your run in the background")
-            // ⚠️ This icon MUST exist in your project (res/drawable or mipmap)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.locc)
             .setOngoing(true)
             .build()
 

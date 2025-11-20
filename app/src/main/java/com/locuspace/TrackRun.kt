@@ -36,17 +36,24 @@ import com.locuspace.Database.RunEntity
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Environment
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.jvm.java
 
 
-class TrackRun : AppCompatActivity(){
+class TrackRun : BaseActivity(){
 
+
+    private lateinit var menu : ImageView
     private lateinit var mapView: MapView
     private lateinit var timeText : TextView
     private lateinit var startButton : Button
     private lateinit var finishButton : Button
+
+    private lateinit var musicbutton : ImageView
 
     //location
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -87,10 +94,8 @@ class TrackRun : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.home)
-
-
-
 
 
         //location preference
@@ -120,15 +125,15 @@ class TrackRun : AppCompatActivity(){
         }
 
         requestLocationPermission()
+
+
         //notification
         requestNotificationPermissionIfNeeded()
 
+        initmap()
 
-        mapView = findViewById(R.id.map)
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
-        mapView.setMultiTouchControls(true)
 
-        val mapController = mapView.controller
+//        val mapController = mapView.controller
 //        mapController.setZoom(15.0)
 //        val marker = Marker(mapView)
 //
@@ -136,19 +141,34 @@ class TrackRun : AppCompatActivity(){
 //        mapController.setCenter(startPoint)
 
 
+        initfun()
+
+        finishButton.visibility = View.GONE
+        updateTimeText(0L)
+
+        onclick()
+        enableImmersiveMode()
+    }
+
+    private fun initmap(){
+        mapView = findViewById(R.id.map)
+        mapView.setTileSource(TileSourceFactory.MAPNIK)
+        mapView.setMultiTouchControls(true)
+    }
+
+
+    private fun initfun(){
         timeText = findViewById(R.id.time)
         startButton = findViewById(R.id.start_button)
         finishButton = findViewById(R.id.stop_button)
+        musicbutton = findViewById(R.id.music_icon)
+        menu = findViewById(R.id.nav)
+    }
 
-        val musicIcon = findViewById<ImageView>(R.id.music_icon)
-
-        musicIcon.setOnClickListener {
-            openSpotify()
+    private fun onclick(){
+        finishButton.setOnClickListener {
+            finishRun()
         }
-
-        finishButton.visibility = View.GONE
-
-        updateTimeText(0L)
 
         startButton.setOnClickListener {
             if(!isRunning){
@@ -159,9 +179,16 @@ class TrackRun : AppCompatActivity(){
             }
         }
 
-        finishButton.setOnClickListener {
-            finishRun()
+        musicbutton.setOnClickListener {
+            openSpotify()
         }
+
+        menu.setOnClickListener {
+            val intent = Intent(this, Menu::class.java)
+            startActivity(intent)
+        }
+
+
     }
 
 
@@ -250,8 +277,6 @@ class TrackRun : AppCompatActivity(){
         startButton.text = "START"
         stopForegroundTrackingService()
 
-
-
         val now = SystemClock.elapsedRealtime()
         elapsedTime += now - baseTime
 
@@ -266,7 +291,7 @@ class TrackRun : AppCompatActivity(){
         elapsedTime =0L
         baseTime = 0L
         updateTimeText(0L)
-        startButton.text = "Start"
+        startButton.text = "START"
 
         pathPoints.clear()
         pathLine?.setPoints(pathPoints)
@@ -288,8 +313,6 @@ class TrackRun : AppCompatActivity(){
     override fun onPause() {
         super.onPause()
         mapView.onPause()
-//        fusedLocationClient.removeLocationUpdates(locationCallback)
-//        if(isRunning) stopStopWatch()
     }
 
     private fun requestLocationPermission() {
@@ -385,22 +408,14 @@ class TrackRun : AppCompatActivity(){
     }
 
     private fun openSpotify() {
-        // 1) Your target link (playlist/track/artist/whatever)
-        // Replace this with your own:
-        // e.g. "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M"
-        val spotifyUrl = "https://open.spotify.com/"
+         val spotifyUrl = "https://open.spotify.com/"
 
-        // Intent to open Spotify using HTTPS deeplink
         val spotifyIntent = Intent(Intent.ACTION_VIEW, Uri.parse(spotifyUrl)).apply {
-            // Prefer Spotify app if installed
             `package` = "com.spotify.music"
         }
-
-        // Try to open in Spotify app
         if (spotifyIntent.resolveActivity(packageManager) != null) {
             startActivity(spotifyIntent)
         } else {
-            // Fallback: open in browser or Play Store
             val webIntent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(spotifyUrl)
@@ -437,6 +452,8 @@ class TrackRun : AppCompatActivity(){
 
 
 
+
+
     private fun captureRouteSnapshot(): Bitmap? {
         if (mapView.width == 0 || mapView.height == 0) return null
 
@@ -467,10 +484,22 @@ class TrackRun : AppCompatActivity(){
     }
 
 
+    private fun enableImmersiveMode() {
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
 
+        controller.hide(
+            WindowInsetsCompat.Type.statusBars() or
+                    WindowInsetsCompat.Type.navigationBars()
+        )
 
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    }
 
-
-
-
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            enableImmersiveMode()
+        }
+    }
 }

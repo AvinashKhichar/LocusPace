@@ -16,4 +16,98 @@
     <string name="time">TIME</string>
     <string name="avg_speed">AVG SPEED</string>
     <string name="avg_pace">AVG PACE</string>
+    <string name="dp_title">How We Process Your Data</string>
+
+    <string name="dp_intro">
+    Your data is important, and LocusPace is designed to keep it safe. All your data is stored only on your device and never sent to any server.
+</string>
+
+    <string name="dp_safety_heading">Data Safety &amp; Storage</string>
+
+    <string name="dp_safety_body">
+    • All your runs, routes, statistics, and preferences are stored locally on your phone.\n
+    • No data is uploaded to any cloud or our servers.\n
+    • No third party has access to your information.
+</string>
+
+    <string name="dp_location_heading">Location Data</string>
+
+    <string name="dp_location_body">
+    Your location is used only to track your runs and generate metrics like distance, pace, and speed. This information never leaves your device and is not shared with us or anyone else.
+</string>
+
+    <string name="dp_usage_heading">How We Use Your Data</string>
+
+    <string name="dp_usage_body">
+    We only use your data to provide core app features, such as:\n\n
+    • Drawing your running path on the map.\n
+    • Calculating distance, pace, and speed.\n
+    • Generating your run history and statistics.\n
+    • Creating GPX files when you choose to export a run.
+</string>
+
+    <string name="dp_sharing_heading">No Collection, No Selling, No Sharing</string>
+
+    <string name="dp_sharing_body">
+    LocusPace does not collect personal information for analytics or advertising. We do not sell, rent, or share your data with advertisers, third parties, or any external service.
+</string>
+
+    <string name="dp_control_heading">You Are In Control</string>
+
+    <string name="dp_control_body">
+    You can delete your runs and data from within the app at any time. If you uninstall LocusPace, all data stored by the app is automatically removed from your device.
+</string>
+    <string name="tutorial_title">App Tutorial</string>
+
+    <string name="tutorial_intro">
+    Welcome to LocusPace! This guide will help you understand how to use the app to track your runs and review your performance.
+</string>
+
+    <string name="tutorial_getting_started_heading">Getting Started</string>
+    <string name="tutorial_getting_started_body">
+    • Make sure location and activity permissions are granted.\n
+    • Turn on GPS for accurate route tracking.\n
+    • Keep your phone with you while running.
+</string>
+
+    <string name="tutorial_start_run_heading">Starting a Run</string>
+    <string name="tutorial_start_run_body">
+    • Open the main screen of LocusPace.\n
+    • Wait a moment for the map and your current location to load.\n
+    • Tap the Start button to begin tracking your run.\n
+    • The app will start recording your route, distance, pace, and duration.
+</string>
+
+    <string name="tutorial_during_run_heading">During the Run</string>
+    <string name="tutorial_during_run_body">
+    • You can lock your screen while running; tracking continues in the background.\n
+    • A notification will show your active run so you know tracking is active.\n
+    • Avoid force closing the app while a run is in progress.
+</string>
+
+    <string name="tutorial_finish_run_heading">Finishing a Run</string>
+    <string name="tutorial_finish_run_body">
+    • When you are done, open the app again.\n
+    • Tap the Finish button to stop tracking.\n
+    • Your run will be saved automatically to your history.\n
+    • You can view distance, time, pace, and route on the map.
+</string>
+
+    <string name="tutorial_history_heading">Viewing Run History</string>
+    <string name="tutorial_history_body">
+    • Open the Statistics or History screen from the bottom navigation or menu.\n
+    • Tap on any run to see detailed stats and the route.\n
+    • Use this to track your progress over time.
+</string>
+
+    <string name="tutorial_tips_heading">Tips for Best Accuracy</string>
+    <string name="tutorial_tips_body">
+    • Keep GPS enabled and avoid areas with poor signal when possible.\n
+    • Do not frequently kill the app while running.\n
+    • Make sure battery saver is not aggressively restricting background activity for LocusPace.
+</string>
+
+
+    <string name="love">With ❤️ by Team LocusPace</string>
+
 </resources>

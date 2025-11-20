@@ -10,12 +10,12 @@
         android:id="@+id/toolbar_history"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="#B58668"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/arrow"
-        app:navigationIconTint="?attr/colorOnPrimary"
+        android:fontFamily="@font/poppins_light"
         app:title="Statistics"
         app:titleTextColor="?attr/colorOnPrimary" />
 
@@ -39,6 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Activity Summary"
+                android:fontFamily="@font/poppins_thin"
                 android:textAppearance="?attr/textAppearanceTitleMedium" />
 
             <!-- Summary “chart” area -->
@@ -56,6 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Total runs: 0"
+                    android:fontFamily="@font/poppins_light"
                     android:textAppearance="?attr/textAppearanceBodyMedium" />
 
                 <TextView
@@ -63,6 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:fontFamily="@font/poppins_light"
                     android:text="Total distance: 0.00 km"
                     android:textAppearance="?attr/textAppearanceBodyMedium" />
 
@@ -71,6 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:fontFamily="@font/poppins_light"
                     android:text="Total duration: 00:00:00"
                     android:textAppearance="?attr/textAppearanceBodyMedium" />
 
@@ -78,6 +82,7 @@
                     android:id="@+id/tv_avg_speed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_light"
                     android:layout_marginTop="4dp"
                     android:text="Avg speed: 0.0 km/h"
                     android:textAppearance="?attr/textAppearanceBodyMedium" />
@@ -93,6 +98,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:text="All Tracks"
+        android:fontFamily="@font/poppins_thin"
         android:textAppearance="?attr/textAppearanceTitleLarge"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/card_graph_stats" />

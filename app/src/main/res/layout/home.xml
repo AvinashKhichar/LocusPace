@@ -4,20 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
     tools:context=".TrackRun">
 
+    <!-- Fullscreen Map -->
     <org.osmdroid.views.MapView
         android:id="@+id/map"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" >
-    </org.osmdroid.views.MapView>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Left Navigation Icon -->
     <ImageView
         android:id="@+id/nav"
         android:layout_width="48dp"
@@ -25,14 +25,13 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
         android:padding="8dp"
         android:src="@drawable/menu"
+        android:contentDescription="Navigation Menu"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="Navigation Menu"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Right Music Icon -->
     <ImageView
         android:id="@+id/music_icon"
         android:layout_width="48dp"
@@ -40,33 +39,39 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
         android:padding="8dp"
         android:src="@drawable/headphone"
+        android:contentDescription="Music Controls"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="Music Controls"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- App Name Centered Between Icons -->
     <TextView
+        android:id="@+id/tv_app_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/h4"
-        android:textSize="28sp"
+        android:text="@string/app_name"
+        android:textSize="26sp"
         android:textStyle="bold"
-        android:hint="@string/app_name"
-        app:layout_constraintStart_toStartOf="@id/guidelineleft"
-        app:layout_constraintEnd_toEndOf="@id/guidelineright"
+        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="@id/nav"
-        app:layout_constraintBottom_toBottomOf="@id/nav"/>
+        app:layout_constraintBottom_toBottomOf="@id/nav"
+        app:layout_constraintStart_toEndOf="@id/nav"
+        app:layout_constraintEnd_toStartOf="@id/music_icon"
+        android:gravity="center"
+        tools:ignore="HardcodedText" />
 
-    <androidx.cardview.widget.CardView
+    <!-- Stats Material Bubble -->
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/stats_bubble"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        app:cardCornerRadius="40dp"
-        app:cardElevation="8dp"
-        app:layout_constraintTop_toBottomOf="@id/guidelinebutton"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="10dp"
+        app:strokeWidth="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -76,8 +81,9 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:padding="16dp">
+            android:padding="20dp">
 
+            <!-- Time -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -89,9 +95,10 @@
                     style="@style/h4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="25:30"
-                    android:textSize="25sp"
-                    android:textStyle="bold"/>
+                    android:text="00:00"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
                     android:id="@+id/time_label"
@@ -99,76 +106,46 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Time"
-                    android:textSize="12sp"/>
+                    android:textSize="13sp"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
             </LinearLayout>
 
+            <!-- Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginTop="24dp">
+                android:layout_marginTop="28dp">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/start_button"
-                    style="@style/blueButtonStyle"
+                    style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    android:text="Start"
+                    android:text="START"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textAllCaps="false" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/stop_button"
-                    style="@style/blueButtonStyle"
+                    style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:text="Finish"
+                    android:text="FINISH"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textAllCaps="false"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    app:backgroundTint="#B58668"/>
             </LinearLayout>
 
-
-
-
         </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelinebutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.8" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineleft"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.36" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineright"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.66" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelinetop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.1" />
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

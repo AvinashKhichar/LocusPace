@@ -10,12 +10,11 @@
         android:id="@+id/toolbar_backup"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="#B58668"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/arrow"
-        app:navigationIconTint="?attr/colorOnPrimary"
         app:title="Backup and Restore"
         app:titleTextColor="?attr/colorOnPrimary"/>
 
@@ -50,19 +49,19 @@
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/btn_export_gpx"
                 style="@style/NavMenuItem"
-                android:text="Export to GPX File"
+                android:text="  Export to GPX File"
                 app:drawableStartCompat="@drawable/backup"/>
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/btn_import_gpx"
                 style="@style/NavMenuItem"
-                android:text="Import from GPX File"
+                android:text="  Import from GPX File"
                 app:drawableStartCompat="@drawable/resource_import"/>
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/btn_backup_drive"
                 style="@style/NavMenuItem"
-                android:text="Backup to Google Drive"
+                android:text="  Backup to Google Drive"
                 app:drawableStartCompat="@drawable/drive"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

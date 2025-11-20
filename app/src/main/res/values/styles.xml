@@ -6,33 +6,36 @@
     <dimen name="h5TextSize">30sp</dimen>
 
 
-        <style name="h2">
-            <item name="android:fontFamily">@font/poppins_light</item>
-            <item name="android:textColor">@color/g_gray700</item>
-            <item name="android:textSize">@dimen/h2TextSize</item>
-        </style>
+    <style name="h2">
+        <item name="android:fontFamily">@font/poppins_light</item>
+        <!-- Dark: white / Light: black (via colorOnBackground) -->
+        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:textSize">@dimen/h2TextSize</item>
+    </style>
 
-        <style name="h3">
-            <item name="android:fontFamily">@font/poppins_light</item>
-            <item name="android:textColor">@color/black</item>
-            <item name="android:textSize">@dimen/h3TextSize</item>
-        </style>
+    <style name="h3">
+        <item name="android:fontFamily">@font/poppins_light</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:textSize">@dimen/h3TextSize</item>
+    </style>
 
-        <style name="h4">
-            <item name="android:fontFamily">@font/poppins_thin</item>
-            <item name="android:textColor">@color/g_black</item>
-            <item name="android:textSize">@dimen/h4TextSize</item>
-        </style>
+    <style name="h4">
+        <item name="android:fontFamily">@font/poppins_thin</item>
+        <!-- Slightly dimmer than main text -->
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textSize">@dimen/h4TextSize</item>
+    </style>
 
-        <style name="h5">
-            <item name="android:fontFamily">@font/poppins_light</item>
-            <item name="android:textColor">@color/black</item>
-            <item name="android:textSize">@dimen/h5TextSize</item>
-        </style>
+    <style name="h5">
+        <item name="android:fontFamily">@font/poppins_light</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:textSize">@dimen/h5TextSize</item>
+    </style>
 
         <style name="SettingsCategoryHeader" parent="h2">
             <item name="android:textColor">?attr/colorPrimary</item>
             <item name="android:textStyle">bold</item>
+            <item name="android:textSize">@dimen/h3TextSize</item>
             <item name="android:layout_marginTop">16dp</item>
             <item name="android:layout_marginStart">24dp</item>
             <item name="android:layout_marginBottom">4dp</item>
